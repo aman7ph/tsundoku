@@ -1,0 +1,18 @@
+# Secrets: never commit these
+.env
+*.keystore
+*.jks
+google-services.json
+
+# Rust
+target/
+
+# Node / React Native / Expo
+node_modules/
+.expo/
+dist/
+
+# OS and editor
+Thumbs.db
+.DS_Store
+.idea/
