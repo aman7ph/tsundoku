@@ -1,18 +1,22 @@
-use axum::{routing::get, Router};
+mod config;
+mod db;
+mod handlers;
+mod models;
+mod routes;
+mod state;
+
+use config::Config;
+use state::AppState;
 
 #[tokio::main]
-async fn main(){
-    let app = Router::new().route("/", get(hello));
-    let listener = tokio::net::TcpListener::bind("127.0.0.1:3000")
-        .await
-        .unwrap();
+async fn main() {
+    let config = Config::from_env();
+    let pool = db::create_pool(&config.database_url).await;
+    let app = routes::create_router(AppState { db: pool });
 
-    println!("Tsundoku backend running on http://127.0.0.1:3000");
-    axum::serve(listener, app).await.unwrap()
+    let addr = format!("{}:{}", config.host, config.port);
+    let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
 
-}
-
-// A handler: runs when someone visits "/"
-async fn hello() -> &'static str {
-    "Hello from Tsundoku! 積ん読"
+    println!("Tsundoku backend running on http://{addr}");
+    axum::serve(listener, app).await.unwrap();
 }
