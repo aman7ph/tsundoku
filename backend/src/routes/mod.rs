@@ -11,6 +11,8 @@ mod health;
 mod platforms;
 mod resources;
 mod sections;
+mod social_categories;
+mod social_links;
 
 pub fn create_router(state: AppState) -> Router {
     // Each feature's router registers its handlers; the OpenAPI spec is built from them
@@ -21,6 +23,8 @@ pub fn create_router(state: AppState) -> Router {
         .merge(resources::router())
         .merge(platforms::router())
         .merge(accounts::router())
+        .merge(social_categories::router())
+        .merge(social_links::router())
         .split_for_parts();
 
     router

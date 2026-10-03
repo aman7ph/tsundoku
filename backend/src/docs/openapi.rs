@@ -12,11 +12,13 @@ use utoipa::{
     modifiers(&SecurityAddon),
     tags(
         (name = "Health", description = "Service status"),
-        (name = "Sections", description = "Top-level named sections of the Collections area"),
-        (name = "Categories", description = "Categories and nested subcategories inside a section"),
-        (name = "Resources", description = "Saved links inside a category, with visited and shareable flags"),
+        (name = "Sections", description = "Collections: top-level named sections"),
+        (name = "Categories", description = "Collections: categories and nested subcategories inside a section"),
+        (name = "Resources", description = "Collections: saved links inside a category, with visited and shareable flags"),
         (name = "Platforms", description = "Social Links: platforms such as YouTube or TikTok"),
         (name = "Accounts", description = "Social Links: the user's accounts on a platform"),
+        (name = "Social Categories", description = "Social Links: categories inside an account"),
+        (name = "Social Links", description = "Social Links: saved links inside a category, with a shareable flag"),
     )
 )]
 pub struct ApiDoc;
