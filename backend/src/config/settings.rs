@@ -9,8 +9,7 @@ impl Config {
         dotenvy::dotenv().ok();
 
         Self {
-            database_url: std::env::var("DATABASE_URL")
-                .expect("DATABASE_URL must be set in .env"),
+            database_url: std::env::var("DATABASE_URL").expect("DATABASE_URL must be set in .env"),
             host: std::env::var("HOST").unwrap_or_else(|_| "127.0.0.1".into()),
             port: std::env::var("PORT")
                 .ok()

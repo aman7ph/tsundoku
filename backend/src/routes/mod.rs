@@ -1,11 +1,23 @@
 use axum::Router;
+use utoipa::OpenApi;
+use utoipa_axum::router::OpenApiRouter;
+use utoipa_scalar::{Scalar, Servable};
 
-use crate::state::AppState;
+use crate::{config::AppState, docs::ApiDoc};
 
+mod categories;
 mod health;
+mod sections;
 
 pub fn create_router(state: AppState) -> Router {
-    Router::new()
-        .merge(health::routes())
+    // Each feature's router registers its handlers; the OpenAPI spec is built from them
+    let (router, api) = OpenApiRouter::with_openapi(ApiDoc::openapi())
+        .merge(health::router())
+        .merge(sections::router())
+        .merge(categories::router())
+        .split_for_parts();
+
+    router
+        .merge(Scalar::with_url("/docs", api))
         .with_state(state)
 }

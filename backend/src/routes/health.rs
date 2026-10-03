@@ -1,9 +1,9 @@
-use axum::{routing::get, Router};
+use utoipa_axum::{router::OpenApiRouter, routes};
 
-use crate::{handlers::health, state::AppState};
+use crate::{config::AppState, handlers::health};
 
-pub fn routes() -> Router<AppState> {
-    Router::new()
-        .route("/", get(health::hello))
-        .route("/health/db", get(health::health_db))
+pub fn router() -> OpenApiRouter<AppState> {
+    OpenApiRouter::new()
+        .routes(routes!(health::hello))
+        .routes(routes!(health::health_db))
 }
