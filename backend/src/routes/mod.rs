@@ -5,8 +5,10 @@ use utoipa_scalar::{Scalar, Servable};
 
 use crate::{config::AppState, docs::ApiDoc};
 
+mod accounts;
 mod categories;
 mod health;
+mod platforms;
 mod resources;
 mod sections;
 
@@ -17,6 +19,8 @@ pub fn create_router(state: AppState) -> Router {
         .merge(sections::router())
         .merge(categories::router())
         .merge(resources::router())
+        .merge(platforms::router())
+        .merge(accounts::router())
         .split_for_parts();
 
     router

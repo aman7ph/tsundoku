@@ -10,8 +10,10 @@ pub enum AppError {
     Unauthorized,
     NotFound,
     BadRequest(String),
+    Conflict(String),
     Internal,
 }
+
 /// Shape of every error response
 #[derive(Serialize, ToSchema)]
 pub struct ErrorBody {
@@ -22,6 +24,12 @@ pub struct ErrorBody {
 // Lets `?` turn a database error into an AppError automatically
 impl From<sqlx::Error> for AppError {
     fn from(err: sqlx::Error) -> Self {
+        // A UNIQUE constraint was broken: the thing already exists
+        let is_duplicate = matches!(&err, sqlx::Error::Database(e) if e.is_unique_violation());
+        if is_duplicate {
+            return AppError::Conflict("already exists".into());
+        }
+
         eprintln!("database error: {err}");
         AppError::Internal
     }
@@ -33,6 +41,7 @@ impl IntoResponse for AppError {
             AppError::Unauthorized => (StatusCode::UNAUTHORIZED, "unauthorized".to_string()),
             AppError::NotFound => (StatusCode::NOT_FOUND, "not found".to_string()),
             AppError::BadRequest(msg) => (StatusCode::BAD_REQUEST, msg),
+            AppError::Conflict(msg) => (StatusCode::CONFLICT, msg),
             AppError::Internal => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "internal server error".to_string(),

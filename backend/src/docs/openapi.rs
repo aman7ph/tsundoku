@@ -15,6 +15,8 @@ use utoipa::{
         (name = "Sections", description = "Top-level named sections of the Collections area"),
         (name = "Categories", description = "Categories and nested subcategories inside a section"),
         (name = "Resources", description = "Saved links inside a category, with visited and shareable flags"),
+        (name = "Platforms", description = "Social Links: platforms such as YouTube or TikTok"),
+        (name = "Accounts", description = "Social Links: the user's accounts on a platform"),
     )
 )]
 pub struct ApiDoc;
