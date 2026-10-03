@@ -14,6 +14,7 @@ use utoipa::{
         (name = "Health", description = "Service status"),
         (name = "Sections", description = "Top-level named sections of the Collections area"),
         (name = "Categories", description = "Categories and nested subcategories inside a section"),
+        (name = "Resources", description = "Saved links inside a category, with visited and shareable flags"),
     )
 )]
 pub struct ApiDoc;

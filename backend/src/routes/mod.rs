@@ -7,6 +7,7 @@ use crate::{config::AppState, docs::ApiDoc};
 
 mod categories;
 mod health;
+mod resources;
 mod sections;
 
 pub fn create_router(state: AppState) -> Router {
@@ -15,6 +16,7 @@ pub fn create_router(state: AppState) -> Router {
         .merge(health::router())
         .merge(sections::router())
         .merge(categories::router())
+        .merge(resources::router())
         .split_for_parts();
 
     router
