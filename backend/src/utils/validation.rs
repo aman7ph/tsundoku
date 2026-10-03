@@ -14,6 +14,17 @@ pub fn http_url(raw: &str) -> Result<String, AppError> {
     }
 }
 
+/// A required name: trimmed and not empty.
+pub fn required_name(raw: &str) -> Result<String, AppError> {
+    let name = raw.trim();
+
+    if name.is_empty() {
+        Err(AppError::BadRequest("name cannot be empty".into()))
+    } else {
+        Ok(name.to_string())
+    }
+}
+
 /// Trims optional text and turns empty text into None.
 pub fn clean_optional(value: Option<String>) -> Option<String> {
     value

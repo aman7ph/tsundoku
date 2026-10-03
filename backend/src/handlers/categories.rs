@@ -9,10 +9,11 @@ use uuid::Uuid;
 
 use crate::{
     config::AppState,
-    models::category::{Category, CreateCategory},
+    models::category::{Category, CreateCategory, MoveCategory, UpdateCategory},
     utils::{
         auth::CurrentUser,
         error::{AppError, ErrorBody},
+        validation,
     },
 };
 
@@ -71,21 +72,127 @@ pub async fn create_category(
     Path(section_id): Path<Uuid>,
     Json(input): Json<CreateCategory>,
 ) -> Result<(StatusCode, Json<Category>), AppError> {
-    let name = input.name.trim();
-    if name.is_empty() {
-        return Err(AppError::BadRequest("name cannot be empty".into()));
-    }
+    let name = validation::required_name(&input.name)?;
+    let icon = validation::clean_optional(input.icon);
 
     let category = Category::create(
         &state.db,
         user_id,
         section_id,
         input.parent_id,
-        name,
-        input.icon.as_deref(),
+        &name,
+        icon.as_deref(),
     )
     .await?
     .ok_or(AppError::NotFound)?;
 
     Ok((StatusCode::CREATED, Json(category)))
+}
+
+/// Rename a category, change its icon, or reorder it
+#[utoipa::path(
+    patch,
+    path = "/categories/{category_id}",
+    tag = "Categories",
+    security(("dev_user" = [])),
+    params(
+        ("category_id" = Uuid, Path, description = "Category to update")
+    ),
+    request_body = UpdateCategory,
+    responses(
+        (status = 200, description = "Category updated", body = Category),
+        (status = 400, description = "Invalid input", body = ErrorBody),
+        (status = 401, description = "Missing or invalid credentials", body = ErrorBody),
+        (status = 404, description = "Category not found", body = ErrorBody)
+    )
+)]
+pub async fn update_category(
+    State(state): State<AppState>,
+    CurrentUser(user_id): CurrentUser,
+    Path(category_id): Path<Uuid>,
+    Json(input): Json<UpdateCategory>,
+) -> Result<Json<Category>, AppError> {
+    let input = UpdateCategory {
+        name: input
+            .name
+            .as_deref()
+            .map(validation::required_name)
+            .transpose()?,
+        // An empty string is kept on purpose: it tells the database to clear the icon
+        icon: input.icon.map(|i| i.trim().to_string()),
+        position: input.position,
+    };
+
+    let category = Category::update(&state.db, user_id, category_id, &input)
+        .await?
+        .ok_or(AppError::NotFound)?;
+
+    Ok(Json(category))
+}
+
+/// Move a category under another parent, or to the top level of its section
+#[utoipa::path(
+    post,
+    path = "/categories/{category_id}/move",
+    tag = "Categories",
+    security(("dev_user" = [])),
+    params(
+        ("category_id" = Uuid, Path, description = "Category to move")
+    ),
+    request_body = MoveCategory,
+    responses(
+        (status = 200, description = "Category moved", body = Category),
+        (status = 400, description = "Invalid new parent", body = ErrorBody),
+        (status = 401, description = "Missing or invalid credentials", body = ErrorBody),
+        (status = 404, description = "Category not found", body = ErrorBody)
+    )
+)]
+pub async fn move_category(
+    State(state): State<AppState>,
+    CurrentUser(user_id): CurrentUser,
+    Path(category_id): Path<Uuid>,
+    Json(input): Json<MoveCategory>,
+) -> Result<Json<Category>, AppError> {
+    // First tell "category does not exist" (404) apart from "that move is not allowed" (400)
+    Category::find(&state.db, user_id, category_id)
+        .await?
+        .ok_or(AppError::NotFound)?;
+
+    let category = Category::move_to(&state.db, user_id, category_id, input.parent_id)
+        .await?
+        .ok_or_else(|| {
+            AppError::BadRequest(
+                "parent must be a category of the same section, and not inside this category"
+                    .into(),
+            )
+        })?;
+
+    Ok(Json(category))
+}
+
+/// Delete a category together with its subcategories and resources
+#[utoipa::path(
+    delete,
+    path = "/categories/{category_id}",
+    tag = "Categories",
+    security(("dev_user" = [])),
+    params(
+        ("category_id" = Uuid, Path, description = "Category to delete")
+    ),
+    responses(
+        (status = 204, description = "Category deleted"),
+        (status = 401, description = "Missing or invalid credentials", body = ErrorBody),
+        (status = 404, description = "Category not found", body = ErrorBody)
+    )
+)]
+pub async fn delete_category(
+    State(state): State<AppState>,
+    CurrentUser(user_id): CurrentUser,
+    Path(category_id): Path<Uuid>,
+) -> Result<StatusCode, AppError> {
+    if Category::delete(&state.db, user_id, category_id).await? {
+        Ok(StatusCode::NO_CONTENT)
+    } else {
+        Err(AppError::NotFound)
+    }
 }
