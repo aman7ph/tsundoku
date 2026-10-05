@@ -16,6 +16,29 @@ pub struct AuthSettings {
     pub dev_login_enabled: bool,
 }
 
+pub struct TokenLifeSpan {
+    pub access_token_life: i64,
+    pub refresh_token_life: i64,    
+}
+
+
+impl TokenLifeSpan {
+    pub fn from_env() -> Self {
+        dotenvy::dotenv().ok();
+
+        Self {
+            access_token_life: env::var("ACCESS_TOKEN_LIFE")
+                .expect("ACCESS_TOKEN_LIFE must be set in .env")
+                .parse()
+                .expect("ACCESS_TOKEN_LIFE must be an integer"),
+            refresh_token_life: env::var("REFRESH_TOKEN_LIFE")
+                .expect("REFRESH_TOKEN_LIFE must be set in .env")
+                .parse()
+                .expect("REFRESH_TOKEN_LIFE must be an integer"),
+        }
+    }
+}
+
 impl AuthSettings {
     fn from_env() -> Self {
         let jwt_secret = env::var("JWT_SECRET").expect("JWT_SECRET must be set in .env");
