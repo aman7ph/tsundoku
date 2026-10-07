@@ -1,7 +1,13 @@
-use axum::{extract::FromRequestParts, http::request::Parts};
+use axum::{
+    extract::FromRequestParts,
+    http::{header::AUTHORIZATION, request::Parts},
+};
 use uuid::Uuid;
 
-use crate::{config::AppState, utils::error::AppError};
+use crate::{
+    config::AppState,
+    utils::{error::AppError, jwt},
+};
 
 // Any handler that takes `CurrentUser` as a parameter requires a signed-in user
 pub struct CurrentUser(pub Uuid);
@@ -11,16 +17,16 @@ impl FromRequestParts<AppState> for CurrentUser {
 
     async fn from_request_parts(
         parts: &mut Parts,
-        _state: &AppState,
+        state: &AppState,
     ) -> Result<Self, Self::Rejection> {
-        // DEV ONLY: replaced by real JWT verification in the auth step
-        let id = parts
+        let token = parts
             .headers
-            .get("x-user-id")
-            .and_then(|v| v.to_str().ok())
-            .and_then(|s| Uuid::parse_str(s).ok())
+            .get(AUTHORIZATION)
+            .and_then(|value| value.to_str().ok())
+            .and_then(|value| value.strip_prefix("Bearer "))
             .ok_or(AppError::Unauthorized)?;
 
-        Ok(CurrentUser(id))
+        let user_id = jwt::verify_access_token(&state.auth.jwt_secret, token)?;
+        Ok(CurrentUser(user_id))
     }
 }
