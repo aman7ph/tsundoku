@@ -5,3 +5,7 @@ pub mod resource;
 pub mod section;
 pub mod social_category;
 pub mod social_link;
+pub mod session;
+pub mod user;
+
+
