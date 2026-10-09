@@ -3,8 +3,7 @@ use jsonwebtoken::{DecodingKey, EncodingKey, Header, Validation, decode, encode}
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::config::TokenLifeSpan;
-use crate::utils::error::AppError;
+use crate::{config::AuthSettings, utils::error::AppError};
 
 #[derive(Serialize, Deserialize)]
 struct Claims {
@@ -14,20 +13,18 @@ struct Claims {
     exp: i64,
 }
 
-pub fn create_access_token(secret: &str, user_id: Uuid) -> Result<String, AppError> {
-    let life = TokenLifeSpan::from_env();
-
+pub fn create_access_token(auth: &AuthSettings, user_id: Uuid) -> Result<String, AppError> {
     let now = Utc::now();
     let claims = Claims {
         sub: user_id,
         iat: now.timestamp(),
-        exp: (now + Duration::minutes(life.access_token_life)).timestamp(),
+        exp: (now + Duration::minutes(auth.access_token_minutes)).timestamp(),
     };
 
     encode(
         &Header::default(),
         &claims,
-        &EncodingKey::from_secret(secret.as_bytes()),
+        &EncodingKey::from_secret(auth.jwt_secret.as_bytes()),
     )
     .map_err(|err| {
         eprintln!("could not sign access token: {err}");

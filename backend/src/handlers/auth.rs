@@ -1,4 +1,4 @@
-use axum::{extract::State, http::StatusCode, Json};
+use axum::{Json, extract::State, http::StatusCode};
 use uuid::Uuid;
 
 use crate::{
@@ -20,10 +20,10 @@ fn token_pair(
     refresh_token: String,
 ) -> Result<TokenPair, AppError> {
     Ok(TokenPair {
-        access_token: jwt::create_access_token(&state.auth.jwt_secret, user_id)?,
+        access_token: jwt::create_access_token(&state.auth, user_id)?,
         refresh_token,
         token_type: "Bearer".into(),
-        expires_in: jwt::ACCESS_TOKEN_MINUTES * 60,
+        expires_in: state.auth.access_token_minutes * 60,
     })
 }
 
@@ -42,12 +42,8 @@ pub async fn google_login(
     State(state): State<AppState>,
     Json(input): Json<GoogleLogin>,
 ) -> Result<Json<TokenPair>, AppError> {
-    let claims = google::verify_id_token(
-        &state.http,
-        &state.auth.google_client_id,
-        &input.id_token,
-    )
-    .await?;
+    let claims =
+        google::verify_id_token(&state.http, &state.auth.google_client_id, &input.id_token).await?;
 
     let user_id = User::upsert_google(
         &state.db,
@@ -58,7 +54,7 @@ pub async fn google_login(
     )
     .await?;
 
-    let refresh_token = Session::start(&state.db, user_id).await?;
+    let refresh_token = Session::start(&state.db, user_id, state.auth.refresh_token_days).await?;
     Ok(Json(token_pair(&state, user_id, refresh_token)?))
 }
 
@@ -77,7 +73,14 @@ pub async fn refresh(
     State(state): State<AppState>,
     Json(input): Json<RefreshRequest>,
 ) -> Result<Json<TokenPair>, AppError> {
-    match Session::rotate(&state.db, &input.refresh_token).await? {
+    let rotation = Session::rotate(
+        &state.db,
+        &input.refresh_token,
+        state.auth.refresh_token_days,
+    )
+    .await?;
+
+    match rotation {
         Rotation::Rotated {
             user_id,
             refresh_token,
@@ -119,16 +122,10 @@ pub async fn dev_login(State(state): State<AppState>) -> Result<Json<TokenPair>,
         return Err(AppError::NotFound);
     }
 
-    let user_id = User::upsert_google(
-        &state.db,
-        "dev",
-        "dev@example.com",
-        Some("Dev User"),
-        None,
-    )
-    .await?;
+    let user_id =
+        User::upsert_google(&state.db, "dev", "dev@example.com", Some("Dev User"), None).await?;
 
-    let refresh_token = Session::start(&state.db, user_id).await?;
+    let refresh_token = Session::start(&state.db, user_id, state.auth.refresh_token_days).await?;
     Ok(Json(token_pair(&state, user_id, refresh_token)?))
 }
 

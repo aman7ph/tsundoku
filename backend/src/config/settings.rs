@@ -1,4 +1,4 @@
-use std::env;
+use std::{env, str::FromStr};
 
 pub struct Config {
     pub database_url: String,
@@ -14,28 +14,10 @@ pub struct AuthSettings {
     pub google_client_id: String,
     /// Enables POST /auth/dev-login. Development only.
     pub dev_login_enabled: bool,
-}
-
-pub struct TokenLifeSpan {
-    pub access_token_life: i64,
-    pub refresh_token_life: i64,
-}
-
-impl TokenLifeSpan {
-    pub fn from_env() -> Self {
-        dotenvy::dotenv().ok();
-
-        Self {
-            access_token_life: env::var("ACCESS_TOKEN_LIFE")
-                .expect("ACCESS_TOKEN_LIFE must be set in .env")
-                .parse()
-                .expect("ACCESS_TOKEN_LIFE must be an integer"),
-            refresh_token_life: env::var("REFRESH_TOKEN_LIFE")
-                .expect("REFRESH_TOKEN_LIFE must be set in .env")
-                .parse()
-                .expect("REFRESH_TOKEN_LIFE must be an integer"),
-        }
-    }
+    /// How long an access token lives, in minutes (ACCESS_TOKEN_LIFE, default 15)
+    pub access_token_minutes: i64,
+    /// How long a refresh token lives, in days (REFRESH_TOKEN_LIFE, default 30)
+    pub refresh_token_days: i32,
 }
 
 impl AuthSettings {
@@ -51,6 +33,8 @@ impl AuthSettings {
             google_client_id: env::var("GOOGLE_CLIENT_ID")
                 .expect("GOOGLE_CLIENT_ID must be set in .env"),
             dev_login_enabled: env::var("ENABLE_DEV_LOGIN").is_ok_and(|v| v == "true"),
+            access_token_minutes: env_number("ACCESS_TOKEN_LIFE", 15),
+            refresh_token_days: env_number("REFRESH_TOKEN_LIFE", 30),
         }
     }
 }
@@ -68,5 +52,16 @@ impl Config {
                 .unwrap_or(3000),
             auth: AuthSettings::from_env(),
         }
+    }
+}
+
+/// Reads a number from the environment, using `default` when the variable is not set.
+fn env_number<T: FromStr>(name: &str, default: T) -> T {
+    match env::var(name) {
+        Ok(value) => value
+            .trim()
+            .parse()
+            .unwrap_or_else(|_| panic!("{name} must be a whole number")),
+        Err(_) => default,
     }
 }

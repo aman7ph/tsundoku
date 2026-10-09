@@ -3,8 +3,6 @@ use sqlx::{PgConnection, PgPool};
 use utoipa::ToSchema;
 use uuid::Uuid;
 
-use crate::config::TokenLifeSpan;
-
 // SQL that hashes the token passed as parameter `$n`. Hashing in Postgres keeps the
 // plain token out of our tables and needs no extra crate. A macro so that it can be
 // joined into the query at compile time (SQLx needs literal queries).
@@ -55,16 +53,24 @@ pub struct Session;
 
 impl Session {
     /// Starts a new session and returns its first refresh token.
-    pub async fn start(pool: &PgPool, user_id: Uuid) -> Result<String, sqlx::Error> {
+    pub async fn start(
+        pool: &PgPool,
+        user_id: Uuid,
+        refresh_days: i32,
+    ) -> Result<String, sqlx::Error> {
         let mut conn = pool.acquire().await?;
-        insert_token(&mut conn, user_id, Uuid::new_v4()).await
+        insert_token(&mut conn, user_id, Uuid::new_v4(), refresh_days).await
     }
 
     /// Exchanges a refresh token for a new one.
     ///
     /// A token can be used once. If an already-used token shows up again, someone may have
     /// copied it, so the whole session is revoked.
-    pub async fn rotate(pool: &PgPool, presented: &str) -> Result<Rotation, sqlx::Error> {
+    pub async fn rotate(
+        pool: &PgPool,
+        presented: &str,
+        refresh_days: i32,
+    ) -> Result<Rotation, sqlx::Error> {
         let mut tx = pool.begin().await?;
 
         // One statement marks the token as used, so two requests cannot both succeed
@@ -100,7 +106,7 @@ impl Session {
             return Ok(Rotation::Rejected);
         };
 
-        let refresh_token = insert_token(&mut tx, user_id, family_id).await?;
+        let refresh_token = insert_token(&mut tx, user_id, family_id, refresh_days).await?;
         tx.commit().await?;
 
         Ok(Rotation::Rotated {
@@ -132,11 +138,10 @@ async fn insert_token(
     conn: &mut PgConnection,
     user_id: Uuid,
     family_id: Uuid,
+    refresh_days: i32,
 ) -> Result<String, sqlx::Error> {
     // Two random UUIDs: 64 hex characters from the operating system's secure random source
     let token = format!("{}{}", Uuid::new_v4().simple(), Uuid::new_v4().simple());
-
-    let life = TokenLifeSpan::from_env();
 
     sqlx::query(concat!(
         "INSERT INTO refresh_tokens (user_id, family_id, token_hash, expires_at)
@@ -147,7 +152,7 @@ async fn insert_token(
     .bind(user_id)
     .bind(family_id)
     .bind(&token)
-    .bind(life.refresh_token_life)
+    .bind(refresh_days)
     .execute(conn)
     .await?;
 
