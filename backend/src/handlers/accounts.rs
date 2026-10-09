@@ -20,7 +20,7 @@ use crate::{
     get,
     path = "/platforms/{platform_id}/accounts",
     tag = "Accounts",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("platform_id" = Uuid, Path, description = "Platform to list accounts of")
     ),
@@ -43,7 +43,7 @@ pub async fn list_accounts(
     post,
     path = "/platforms/{platform_id}/accounts",
     tag = "Accounts",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("platform_id" = Uuid, Path, description = "Platform the account belongs to")
     ),
@@ -76,7 +76,7 @@ pub async fn create_account(
     patch,
     path = "/accounts/{account_id}",
     tag = "Accounts",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("account_id" = Uuid, Path, description = "Account to update")
     ),
@@ -116,7 +116,7 @@ pub async fn update_account(
     delete,
     path = "/accounts/{account_id}",
     tag = "Accounts",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("account_id" = Uuid, Path, description = "Account to delete")
     ),

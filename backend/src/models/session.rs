@@ -5,9 +5,6 @@ use uuid::Uuid;
 
 use crate::config::TokenLifeSpan;
 
-/// How long a refresh token stays valid
-pub const REFRESH_TOKEN_DAYS: i32 = 30;
-
 // SQL that hashes the token passed as parameter `$n`. Hashing in Postgres keeps the
 // plain token out of our tables and needs no extra crate. A macro so that it can be
 // joined into the query at compile time (SQLx needs literal queries).
@@ -46,7 +43,10 @@ pub struct TokenPair {
 }
 
 pub enum Rotation {
-    Rotated { user_id: Uuid, refresh_token: String },
+    Rotated {
+        user_id: Uuid,
+        refresh_token: String,
+    },
     Rejected,
 }
 
@@ -135,7 +135,7 @@ async fn insert_token(
 ) -> Result<String, sqlx::Error> {
     // Two random UUIDs: 64 hex characters from the operating system's secure random source
     let token = format!("{}{}", Uuid::new_v4().simple(), Uuid::new_v4().simple());
-    
+
     let life = TokenLifeSpan::from_env();
 
     sqlx::query(concat!(

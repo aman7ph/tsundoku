@@ -20,7 +20,7 @@ use crate::{
     get,
     path = "/platforms",
     tag = "Platforms",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     responses(
         (status = 200, description = "The user's platforms", body = Vec<Platform>),
         (status = 401, description = "Missing or invalid credentials", body = ErrorBody)
@@ -39,7 +39,7 @@ pub async fn list_platforms(
     post,
     path = "/platforms",
     tag = "Platforms",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     request_body = CreatePlatform,
     responses(
         (status = 201, description = "Platform created", body = Platform),
@@ -71,7 +71,7 @@ pub async fn create_platform(
     patch,
     path = "/platforms/{platform_id}",
     tag = "Platforms",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("platform_id" = Uuid, Path, description = "Platform to update")
     ),
@@ -112,7 +112,7 @@ pub async fn update_platform(
     delete,
     path = "/platforms/{platform_id}",
     tag = "Platforms",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("platform_id" = Uuid, Path, description = "Platform to delete")
     ),

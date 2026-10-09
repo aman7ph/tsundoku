@@ -6,6 +6,7 @@ use utoipa_scalar::{Scalar, Servable};
 use crate::{config::AppState, docs::ApiDoc};
 
 mod accounts;
+mod auth;
 mod categories;
 mod health;
 mod platforms;
@@ -18,6 +19,7 @@ pub fn create_router(state: AppState) -> Router {
     // Each feature's router registers its handlers; the OpenAPI spec is built from them
     let (router, api) = OpenApiRouter::with_openapi(ApiDoc::openapi())
         .merge(health::router())
+        .merge(auth::router())
         .merge(sections::router())
         .merge(categories::router())
         .merge(resources::router())

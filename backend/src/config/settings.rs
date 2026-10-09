@@ -18,9 +18,8 @@ pub struct AuthSettings {
 
 pub struct TokenLifeSpan {
     pub access_token_life: i64,
-    pub refresh_token_life: i64,    
+    pub refresh_token_life: i64,
 }
-
 
 impl TokenLifeSpan {
     pub fn from_env() -> Self {

@@ -31,7 +31,7 @@ pub struct ListResourcesParams {
     get,
     path = "/categories/{category_id}/resources",
     tag = "Resources",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("category_id" = Uuid, Path, description = "Category to list resources of"),
         ListResourcesParams
@@ -64,7 +64,7 @@ pub async fn list_resources(
     post,
     path = "/categories/{category_id}/resources",
     tag = "Resources",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("category_id" = Uuid, Path, description = "Category the resource is saved in")
     ),
@@ -102,7 +102,7 @@ pub async fn create_resource(
     patch,
     path = "/resources/{resource_id}",
     tag = "Resources",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("resource_id" = Uuid, Path, description = "Resource to update")
     ),
@@ -141,7 +141,7 @@ pub async fn update_resource(
     delete,
     path = "/resources/{resource_id}",
     tag = "Resources",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("resource_id" = Uuid, Path, description = "Resource to delete")
     ),

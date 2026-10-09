@@ -20,7 +20,7 @@ use crate::{
     get,
     path = "/sections",
     tag = "Sections",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     responses(
         (status = 200, description = "The user's sections", body = Vec<Section>),
         (status = 401, description = "Missing or invalid credentials", body = ErrorBody)
@@ -39,7 +39,7 @@ pub async fn list_sections(
     post,
     path = "/sections",
     tag = "Sections",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     request_body = CreateSection,
     responses(
         (status = 201, description = "Section created", body = Section),
@@ -64,7 +64,7 @@ pub async fn create_section(
     patch,
     path = "/sections/{section_id}",
     tag = "Sections",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("section_id" = Uuid, Path, description = "Section to update")
     ),
@@ -105,7 +105,7 @@ pub async fn update_section(
     delete,
     path = "/sections/{section_id}",
     tag = "Sections",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("section_id" = Uuid, Path, description = "Section to delete")
     ),

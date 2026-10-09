@@ -29,7 +29,7 @@ pub struct ListSocialLinksParams {
     get,
     path = "/social-categories/{category_id}/links",
     tag = "Social Links",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("category_id" = Uuid, Path, description = "Category to list links of"),
         ListSocialLinksParams
@@ -54,7 +54,7 @@ pub async fn list_social_links(
     post,
     path = "/social-categories/{category_id}/links",
     tag = "Social Links",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("category_id" = Uuid, Path, description = "Category the link is saved in")
     ),
@@ -91,7 +91,7 @@ pub async fn create_social_link(
     patch,
     path = "/social-links/{link_id}",
     tag = "Social Links",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("link_id" = Uuid, Path, description = "Link to update")
     ),
@@ -129,7 +129,7 @@ pub async fn update_social_link(
     delete,
     path = "/social-links/{link_id}",
     tag = "Social Links",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("link_id" = Uuid, Path, description = "Link to delete")
     ),

@@ -29,7 +29,7 @@ pub struct ListParams {
     get,
     path = "/sections/{section_id}/categories",
     tag = "Categories",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("section_id" = Uuid, Path, description = "Section to list categories of"),
         ListParams
@@ -54,7 +54,7 @@ pub async fn list_categories(
     post,
     path = "/sections/{section_id}/categories",
     tag = "Categories",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("section_id" = Uuid, Path, description = "Section the category belongs to")
     ),
@@ -94,7 +94,7 @@ pub async fn create_category(
     patch,
     path = "/categories/{category_id}",
     tag = "Categories",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("category_id" = Uuid, Path, description = "Category to update")
     ),
@@ -135,7 +135,7 @@ pub async fn update_category(
     post,
     path = "/categories/{category_id}/move",
     tag = "Categories",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("category_id" = Uuid, Path, description = "Category to move")
     ),
@@ -175,7 +175,7 @@ pub async fn move_category(
     delete,
     path = "/categories/{category_id}",
     tag = "Categories",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("category_id" = Uuid, Path, description = "Category to delete")
     ),

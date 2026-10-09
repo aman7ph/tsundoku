@@ -1,6 +1,6 @@
 use utoipa::{
     Modify, OpenApi,
-    openapi::security::{ApiKey, ApiKeyValue, SecurityScheme},
+    openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme},
 };
 
 #[derive(OpenApi)]
@@ -12,6 +12,7 @@ use utoipa::{
     modifiers(&SecurityAddon),
     tags(
         (name = "Health", description = "Service status"),
+        (name = "Auth", description = "Sign in with Google, refresh and end sessions"),
         (name = "Sections", description = "Collections: top-level named sections"),
         (name = "Categories", description = "Collections: categories and nested subcategories inside a section"),
         (name = "Resources", description = "Collections: saved links inside a category, with visited and shareable flags"),
@@ -30,11 +31,16 @@ impl Modify for SecurityAddon {
     fn modify(&self, openapi: &mut utoipa::openapi::OpenApi) {
         let components = openapi.components.get_or_insert_with(Default::default);
         components.add_security_scheme(
-            "dev_user",
-            SecurityScheme::ApiKey(ApiKey::Header(ApiKeyValue::with_description(
-                "x-user-id",
-                "DEV ONLY: paste a user UUID. Replaced by Google sign-in and JWT later.",
-            ))),
+            "bearer",
+            SecurityScheme::Http(
+                HttpBuilder::new()
+                    .scheme(HttpAuthScheme::Bearer)
+                    .bearer_format("JWT")
+                    .description(Some(
+                        "Paste the access_token from /auth/google or /auth/dev-login",
+                    ))
+                    .build(),
+            ),
         );
     }
 }

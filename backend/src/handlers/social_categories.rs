@@ -20,7 +20,7 @@ use crate::{
     get,
     path = "/accounts/{account_id}/categories",
     tag = "Social Categories",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("account_id" = Uuid, Path, description = "Account to list categories of")
     ),
@@ -43,7 +43,7 @@ pub async fn list_social_categories(
     post,
     path = "/accounts/{account_id}/categories",
     tag = "Social Categories",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("account_id" = Uuid, Path, description = "Account the category belongs to")
     ),
@@ -76,7 +76,7 @@ pub async fn create_social_category(
     patch,
     path = "/social-categories/{category_id}",
     tag = "Social Categories",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("category_id" = Uuid, Path, description = "Category to update")
     ),
@@ -117,7 +117,7 @@ pub async fn update_social_category(
     delete,
     path = "/social-categories/{category_id}",
     tag = "Social Categories",
-    security(("dev_user" = [])),
+    security(("bearer" = [])),
     params(
         ("category_id" = Uuid, Path, description = "Category to delete")
     ),
