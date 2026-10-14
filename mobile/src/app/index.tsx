@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   screen: { flex: 1 },
   content: { flex: 1, paddingHorizontal: 24, paddingVertical: 16 },
   logo: {
-    alignSelf: "flex-start",
+    alignSelf: "center",
     backgroundColor: colors.primary,
     borderRadius: 8,
     paddingHorizontal: 10,
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   },
   logoText: { color: colors.paper, fontSize: 15, fontWeight: "700" },
 
-  illustration: { alignItems: "center", paddingTop: 90 },
+  illustration: { alignItems: "center", paddingTop: 120 },
   copy: { marginTop: 150, marginBottom: 28 },
   headlineAccent: {
     fontSize: 38,
