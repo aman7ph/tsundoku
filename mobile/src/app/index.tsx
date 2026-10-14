@@ -23,7 +23,7 @@ export default function Welcome() {
         <View style={styles.copy}>
           <Text style={[fonts.sans, styles.headlineAccent]}>
             Keep your curious{"\n"}
-            <Text style={[styles.headlineAccent]}>mind piled up.</Text>
+            mind piled up.
           </Text>
           <Text style={[fonts.sans, styles.body]}>
             Save the things you want to remember, and find them when you're
