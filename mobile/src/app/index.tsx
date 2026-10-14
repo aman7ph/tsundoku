@@ -8,8 +8,6 @@ import { PaperNotes } from "@/components/paper-notes";
 import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
 
-const GOOGLE_BLUE = "#4285F4";
-
 export default function Welcome() {
   return (
     <SafeAreaView style={styles.screen}>
@@ -43,7 +41,7 @@ export default function Welcome() {
           ]}
         >
           <View style={styles.googleBadge}>
-            <AntDesign name="google" size={16} color={GOOGLE_BLUE} />
+            <AntDesign name="google" size={16} color={colors.coral} />
           </View>
           <Text style={[fonts.sans, styles.buttonLabel]}>
             Continue with Google
@@ -54,10 +52,6 @@ export default function Welcome() {
             color={colors.mutedForeground}
           />
         </Pressable>
-
-        <Text style={[fonts.sans, styles.footnote]}>
-          Demo mode · Google sign-in will be connected later
-        </Text>
       </View>
     </SafeAreaView>
   );
@@ -76,19 +70,6 @@ const styles = StyleSheet.create({
   logoText: { color: colors.paper, fontSize: 15, fontWeight: "700" },
   illustration: { flex: 1, alignItems: "center", justifyContent: "center" },
   copy: { marginBottom: 28 },
-  eyebrow: {
-    fontSize: 11,
-    fontWeight: "700",
-    letterSpacing: 2,
-    color: colors.mutedForeground,
-    marginBottom: 12,
-  },
-  headline: {
-    fontSize: 38,
-    lineHeight: 42,
-    letterSpacing: -1,
-    color: colors.foreground,
-  },
   headlineAccent: {
     fontSize: 38,
     lineHeight: 42,
