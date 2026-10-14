@@ -68,8 +68,9 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
   },
   logoText: { color: colors.paper, fontSize: 15, fontWeight: "700" },
-  illustration: { flex: 1, alignItems: "center", justifyContent: "center" },
-  copy: { marginBottom: 28 },
+
+  illustration: { alignItems: "center", paddingTop: 90 },
+  copy: { marginTop: 150, marginBottom: 28 },
   headlineAccent: {
     fontSize: 38,
     lineHeight: 42,
