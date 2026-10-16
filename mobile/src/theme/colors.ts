@@ -10,4 +10,5 @@ export const colors = {
   blue: "#9fc4d4",
   paper: "#fffdf9",
   soft: "#f0ebe2",
+  coralSoft: "#ed745f29",
 } as const;
