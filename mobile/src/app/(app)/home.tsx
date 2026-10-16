@@ -1,17 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
-
-import { colors } from "@/theme/colors";
-import { fonts } from "@/theme/fonts";
+import { PlaceholderPage } from "@/components/placeholder-page";
 
 export default function Home() {
-  return (
-    <View style={styles.container}>
-      <Text style={[fonts.sans, styles.text]}>Tsundoku</Text>
-    </View>
-  );
+  return <PlaceholderPage title="Recent" />;
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", justifyContent: "center" },
-  text: { fontSize: 16, color: colors.foreground },
-});

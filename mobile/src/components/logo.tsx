@@ -5,7 +5,7 @@ import { fonts } from "@/theme/fonts";
 export function Logo() {
   return (
     <View style={styles.chip}>
-      <Text style={[fonts.sans, styles.text]}></Text>
+      <Text style={[fonts.sans, styles.text]}>Tsundoku</Text>
     </View>
   );
 }

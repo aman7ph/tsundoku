@@ -20,14 +20,6 @@ export function AppHeader({ onMenuPress }: AppHeaderProps) {
         <Feather name="menu" size={24} color={colors.foreground} />
       </Pressable>
       <Logo />
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Setting"
-        onPress={() => router.replace("/settings")}
-        style={[styles.side, styles.avatar]}
-      >
-        <Text style={[fonts.sans, styles.avatarText]}>A</Text>
-      </Pressable>
     </View>
   );
 }
