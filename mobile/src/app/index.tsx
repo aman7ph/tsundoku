@@ -25,10 +25,6 @@ export default function Welcome() {
             Keep your curious{"\n"}
             mind piled up.
           </Text>
-          <Text style={[fonts.sans, styles.body]}>
-            Save the things you want to remember, and find them when you're
-            ready.
-          </Text>
         </View>
 
         <Pressable
@@ -70,7 +66,7 @@ const styles = StyleSheet.create({
   logoText: { color: colors.paper, fontSize: 15, fontWeight: "700" },
 
   illustration: { alignItems: "center", paddingTop: 120 },
-  copy: { marginTop: 150, marginBottom: 28 },
+  copy: { marginTop: 150, marginBottom: 58 },
   headlineAccent: {
     fontSize: 38,
     lineHeight: 42,
