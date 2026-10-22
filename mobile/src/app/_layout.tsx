@@ -7,20 +7,31 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { View } from "react-native";
 
+import { useSessionStore } from "@/stores/session";
 import { colors } from "@/theme/colors";
 
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({ ...AntDesign.font, ...Feather.font });
+  const [fontsLoaded, fontError] = useFonts({
+    ...AntDesign.font,
+    ...Feather.font,
+  });
+  const status = useSessionStore((state) => state.status);
 
   useEffect(() => {
-    if (loaded || error) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded, error]);
+    void useSessionStore.getState().restore();
+  }, []);
 
-  if (!loaded && !error) {
+  const ready = (fontsLoaded || fontError !== null) && status !== "loading";
+
+  useEffect(() => {
+    if (ready) {
+      void SplashScreen.hideAsync();
+    }
+  }, [ready]);
+
+  if (!ready) {
     return null;
   }
 

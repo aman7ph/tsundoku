@@ -1,4 +1,4 @@
-import { Slot } from "expo-router";
+import { Redirect, Slot } from "expo-router";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -6,10 +6,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { AddBar } from "@/components/add-bar";
 import { AppHeader } from "@/components/app-header";
 import { Sidebar } from "@/components/sidebar";
+import { useSessionStore } from "@/stores/session";
 
-// Shared frame for every page after the welcome screen
 export default function AppLayout() {
+  const status = useSessionStore((state) => state.status);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  if (status === "signedOut") {
+    return <Redirect href="/" />;
+  }
 
   return (
     <SafeAreaView style={styles.screen}>
