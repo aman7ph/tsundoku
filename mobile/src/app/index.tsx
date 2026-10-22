@@ -89,7 +89,7 @@ export default function Welcome() {
               color={colors.mutedForeground}
             />
           )}
-        </Pressable>{" "}
+        </Pressable>
         {error ? <Text style={[fonts.sans, styles.error]}>{error}</Text> : null}
       </View>
     </SafeAreaView>
