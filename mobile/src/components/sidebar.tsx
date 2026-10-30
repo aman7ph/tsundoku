@@ -115,7 +115,8 @@ export function Sidebar({ visible, onClose }: SidebarProps) {
           <View style={styles.divider} />
 
           {items.map((item) => {
-            const active = pathname === item.href;
+            const active =
+              pathname === item.href || pathname.startsWith(`${item.href}/`);
 
             return (
               <Pressable

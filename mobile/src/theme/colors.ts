@@ -13,4 +13,5 @@ export const colors = {
   coralSoft: "#ed745f29",
   mutedStrong: "#6b665e",
   yellowSoft: "rgba(238, 203, 103, 0.35)",
+  sage: "#a8c3b3",
 } as const;
