@@ -5,6 +5,7 @@ import { API_URL } from "@/api/config";
 import { useSessionStore } from "@/stores/session";
 
 export const api = axios.create({ baseURL: API_URL, timeout: 15000 });
+
 type RetryableConfig = InternalAxiosRequestConfig & { retried?: boolean };
 
 let refreshing: Promise<string> | null = null;
