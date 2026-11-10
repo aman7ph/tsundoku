@@ -18,11 +18,11 @@ import { useFolderMenu } from "@/hooks/use-folder-menu";
 export default function Collections() {
   const sections = useRequest(listSections);
   const [creating, setCreating] = useState(false);
+  const menu = useFolderMenu();
 
   if (sections.data === null) {
     return <ScreenStatus error={sections.error} onRetry={sections.reload} />;
   }
-  const menu = useFolderMenu();
 
   return (
     <>

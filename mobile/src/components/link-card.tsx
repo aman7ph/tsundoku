@@ -1,4 +1,4 @@
-import AntDesign from "@expo/vector-icons/AntDesign";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import Feather from "@expo/vector-icons/Feather";
 import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 
@@ -51,8 +51,8 @@ export function LinkCard({ resource, onToggle }: LinkCardProps) {
         hitSlop={12}
         onPress={() => onToggle({ shareable: !resource.shareable })}
       >
-        <AntDesign
-          name={resource.shareable ? "heart" : "hearto"}
+        <Ionicons
+          name={resource.shareable ? "heart" : "heart-outline"}
           size={20}
           color={resource.shareable ? colors.coral : colors.mutedStrong}
         />

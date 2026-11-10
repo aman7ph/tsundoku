@@ -1,4 +1,5 @@
 import AntDesign from "@expo/vector-icons/AntDesign";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import Feather from "@expo/vector-icons/Feather";
 import { useFonts } from "expo-font";
 import { Slot } from "expo-router";
@@ -16,6 +17,7 @@ export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     ...AntDesign.font,
     ...Feather.font,
+    ...Ionicons.font,
   });
   const status = useSessionStore((state) => state.status);
 

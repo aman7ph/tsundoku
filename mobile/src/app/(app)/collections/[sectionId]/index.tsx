@@ -24,14 +24,13 @@ export default function CollectionPage() {
 
   const categories = useRequest(() => listCategories(sectionId));
   const [creating, setCreating] = useState(false);
+  const menu = useFolderMenu();
 
   if (categories.data === null) {
     return (
       <ScreenStatus error={categories.error} onRetry={categories.reload} />
     );
   }
-
-  const menu = useFolderMenu();
 
   return (
     <>

@@ -39,6 +39,7 @@ export default function CategoryPage() {
   const subcategories = useRequest(() => listCategories(sectionId, categoryId));
   const links = useRequest(() => listResources(categoryId));
   const [creating, setCreating] = useState(false);
+  const menu = useFolderMenu();
 
   const reloadAll = () => {
     void subcategories.reload();
@@ -65,7 +66,6 @@ export default function CategoryPage() {
   };
 
   const empty = subcategories.data.length === 0 && links.data.length === 0;
-  const menu = useFolderMenu();
 
   return (
     <>
