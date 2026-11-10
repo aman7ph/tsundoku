@@ -33,7 +33,7 @@ export function NameSheet({ visible, onClose, ...form }: NameSheetProps) {
   );
 }
 
-function NameForm({
+export function NameForm({
   title,
   placeholder,
   submitLabel,
