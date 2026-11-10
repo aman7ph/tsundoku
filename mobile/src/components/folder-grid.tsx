@@ -20,6 +20,7 @@ type FolderGridProps = {
   items: FolderItem[];
   newLabel: string;
   onOpen: (item: FolderItem) => void;
+  onMenu: (item: FolderItem) => void;
   onNew: () => void;
 };
 
@@ -27,6 +28,7 @@ export function FolderGrid({
   items,
   newLabel,
   onOpen,
+  onMenu,
   onNew,
 }: FolderGridProps) {
   const { width } = useWindowDimensions();
@@ -41,6 +43,7 @@ export function FolderGrid({
           icon={item.icon}
           width={cardWidth}
           onPress={() => onOpen(item)}
+          onMenuPress={() => onMenu(item)}
         />
       ))}
 

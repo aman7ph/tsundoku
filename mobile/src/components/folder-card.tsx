@@ -9,14 +9,22 @@ type FolderCardProps = {
   icon: string | null;
   width: number;
   onPress: () => void;
+  onMenuPress: () => void;
 };
 
 function emojiOf(icon: string | null): string | null {
   return icon?.startsWith("emoji:") ? icon.slice("emoji:".length) : null;
 }
 
-export function FolderCard({ name, icon, width, onPress }: FolderCardProps) {
+export function FolderCard({
+  name,
+  icon,
+  width,
+  onPress,
+  onMenuPress,
+}: FolderCardProps) {
   const emoji = emojiOf(icon);
+
   return (
     <Pressable
       accessibilityRole="button"
@@ -27,13 +35,30 @@ export function FolderCard({ name, icon, width, onPress }: FolderCardProps) {
         pressed && styles.pressed,
       ]}
     >
-      <View style={styles.tile}>
-        {emoji ? (
-          <Text style={styles.emoji}>{emoji}</Text>
-        ) : (
-          <Feather name="folder" size={20} color={colors.foreground} />
-        )}
+      <View style={styles.top}>
+        <View style={styles.tile}>
+          {emoji ? (
+            <Text style={styles.emoji}>{emoji}</Text>
+          ) : (
+            <Feather name="folder" size={20} color={colors.foreground} />
+          )}
+        </View>
+
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`More options for ${name}`}
+          hitSlop={6}
+          onPress={onMenuPress}
+          style={styles.menu}
+        >
+          <Feather
+            name="more-horizontal"
+            size={20}
+            color={colors.mutedStrong}
+          />
+        </Pressable>
       </View>
+
       <Text numberOfLines={2} style={[fonts.sans, styles.name]}>
         {name}
       </Text>
@@ -52,6 +77,11 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   pressed: { backgroundColor: colors.soft },
+  top: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
+  },
   tile: {
     width: 40,
     height: 40,
@@ -61,5 +91,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   emoji: { fontSize: 20 },
+  menu: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    marginTop: -6,
+    marginRight: -8,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   name: { fontSize: 16, fontWeight: "700", color: colors.foreground },
 });
