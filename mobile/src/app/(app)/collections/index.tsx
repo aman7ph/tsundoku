@@ -2,11 +2,18 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { RefreshControl, ScrollView, StyleSheet } from "react-native";
 
-import { createSection, listSections } from "@/api/sections";
+import {
+  createSection,
+  deleteSection,
+  listSections,
+  renameSection,
+} from "@/api/sections";
 import { FolderGrid, PAGE_PADDING } from "@/components/folder-grid";
 import { NameSheet } from "@/components/name-sheet";
 import { ScreenStatus } from "@/components/screen-status";
 import { useRequest } from "@/hooks/use-request";
+import { FolderActions } from "@/components/folder-actions";
+import { useFolderMenu } from "@/hooks/use-folder-menu";
 
 export default function Collections() {
   const sections = useRequest(listSections);
@@ -15,6 +22,7 @@ export default function Collections() {
   if (sections.data === null) {
     return <ScreenStatus error={sections.error} onRetry={sections.reload} />;
   }
+  const menu = useFolderMenu();
 
   return (
     <>
@@ -37,6 +45,7 @@ export default function Collections() {
             })
           }
           onNew={() => setCreating(true)}
+          onMenu={menu.open}
         />
       </ScrollView>
 
@@ -49,6 +58,19 @@ export default function Collections() {
         onClose={() => setCreating(false)}
         onDone={() => {
           setCreating(false);
+          void sections.reload();
+        }}
+      />
+
+      <FolderActions
+        visible={menu.visible}
+        folder={menu.target}
+        kind="collection"
+        onRename={renameSection}
+        onDelete={deleteSection}
+        onClose={menu.close}
+        onChanged={() => {
+          menu.close();
           void sections.reload();
         }}
       />

@@ -8,7 +8,12 @@ import {
   View,
 } from "react-native";
 
-import { createCategory, listCategories } from "@/api/categories";
+import {
+  createCategory,
+  deleteCategory,
+  listCategories,
+  renameCategory,
+} from "@/api/categories";
 import {
   listResources,
   updateResource,
@@ -22,6 +27,8 @@ import { ScreenStatus } from "@/components/screen-status";
 import { useRequest } from "@/hooks/use-request";
 import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
+import { FolderActions } from "@/components/folder-actions";
+import { useFolderMenu } from "@/hooks/use-folder-menu";
 
 export default function CategoryPage() {
   const { sectionId, categoryId, name } = useLocalSearchParams<{
@@ -29,7 +36,6 @@ export default function CategoryPage() {
     categoryId: string;
     name: string;
   }>();
-
   const subcategories = useRequest(() => listCategories(sectionId, categoryId));
   const links = useRequest(() => listResources(categoryId));
   const [creating, setCreating] = useState(false);
@@ -59,6 +65,7 @@ export default function CategoryPage() {
   };
 
   const empty = subcategories.data.length === 0 && links.data.length === 0;
+  const menu = useFolderMenu();
 
   return (
     <>
@@ -87,6 +94,7 @@ export default function CategoryPage() {
             })
           }
           onNew={() => setCreating(true)}
+          onMenu={menu.open}
         />
 
         {links.data.length > 0 ? (
@@ -118,6 +126,19 @@ export default function CategoryPage() {
         onClose={() => setCreating(false)}
         onDone={() => {
           setCreating(false);
+          void subcategories.reload();
+        }}
+      />
+
+      <FolderActions
+        visible={menu.visible}
+        folder={menu.target}
+        kind="category"
+        onRename={renameCategory}
+        onDelete={deleteCategory}
+        onClose={menu.close}
+        onChanged={() => {
+          menu.close();
           void subcategories.reload();
         }}
       />

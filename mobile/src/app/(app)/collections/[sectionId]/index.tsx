@@ -2,12 +2,19 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { RefreshControl, ScrollView, StyleSheet } from "react-native";
 
-import { createCategory, listCategories } from "@/api/categories";
+import {
+  createCategory,
+  deleteCategory,
+  listCategories,
+  renameCategory,
+} from "@/api/categories";
 import { FolderGrid, PAGE_PADDING } from "@/components/folder-grid";
 import { NameSheet } from "@/components/name-sheet";
 import { PageHeader } from "@/components/page-header";
 import { ScreenStatus } from "@/components/screen-status";
 import { useRequest } from "@/hooks/use-request";
+import { FolderActions } from "@/components/folder-actions";
+import { useFolderMenu } from "@/hooks/use-folder-menu";
 
 export default function CollectionPage() {
   const { sectionId, name } = useLocalSearchParams<{
@@ -23,6 +30,8 @@ export default function CollectionPage() {
       <ScreenStatus error={categories.error} onRetry={categories.reload} />
     );
   }
+
+  const menu = useFolderMenu();
 
   return (
     <>
@@ -51,6 +60,7 @@ export default function CollectionPage() {
             })
           }
           onNew={() => setCreating(true)}
+          onMenu={menu.open}
         />
       </ScrollView>
 
@@ -63,6 +73,19 @@ export default function CollectionPage() {
         onClose={() => setCreating(false)}
         onDone={() => {
           setCreating(false);
+          void categories.reload();
+        }}
+      />
+
+      <FolderActions
+        visible={menu.visible}
+        folder={menu.target}
+        kind="category"
+        onRename={renameCategory}
+        onDelete={deleteCategory}
+        onClose={menu.close}
+        onChanged={() => {
+          menu.close();
           void categories.reload();
         }}
       />
