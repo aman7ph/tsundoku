@@ -37,3 +37,15 @@ export async function createCategory(
   );
   return data;
 }
+
+export async function renameCategory(
+  id: string,
+  name: string,
+): Promise<Category> {
+  const { data } = await api.patch<Category>(`/categories/${id}`, { name });
+  return data;
+}
+
+export async function deleteCategory(id: string): Promise<void> {
+  await api.delete(`/categories/${id}`);
+}
