@@ -29,6 +29,7 @@ import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
 import { FolderActions } from "@/components/folder-actions";
 import { useFolderMenu } from "@/hooks/use-folder-menu";
+import { useRefreshStore } from "@/stores/refresh";
 
 export default function CategoryPage() {
   const { sectionId, categoryId, name } = useLocalSearchParams<{
@@ -37,7 +38,7 @@ export default function CategoryPage() {
     name: string;
   }>();
   const subcategories = useRequest(() => listCategories(sectionId, categoryId));
-  const links = useRequest(() => listResources(categoryId));
+
   const [creating, setCreating] = useState(false);
   const menu = useFolderMenu();
 
@@ -45,6 +46,9 @@ export default function CategoryPage() {
     void subcategories.reload();
     void links.reload();
   };
+
+  const version = useRefreshStore((state) => state.version);
+  const links = useRequest(() => listResources(categoryId), String(version));
 
   if (subcategories.data === null || links.data === null) {
     return (
