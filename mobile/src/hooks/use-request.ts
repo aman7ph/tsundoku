@@ -9,7 +9,7 @@ export type Request<T> = State<T> & {
   reload: () => Promise<void>;
 };
 
-export function useRequest<T>(fetcher: () => Promise<T>): Request<T> {
+export function useRequest<T>(fetcher: () => Promise<T>, key = ""): Request<T> {
   const [state, setState] = useState<State<T>>({
     data: null,
     error: null,
@@ -48,7 +48,7 @@ export function useRequest<T>(fetcher: () => Promise<T>): Request<T> {
       return () => {
         requestId.current += 1;
       };
-    }, [reload]),
+    }, [reload, key]),
   );
 
   return { ...state, reload };

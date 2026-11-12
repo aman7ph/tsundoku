@@ -12,6 +12,8 @@ export type Resource = {
   updated_at: string;
 };
 
+export type NewResource = { url: string; description?: string };
+
 export type ResourceChanges = { visited?: boolean; shareable?: boolean };
 
 export async function listResources(categoryId: string): Promise<Resource[]> {
@@ -26,5 +28,16 @@ export async function updateResource(
   changes: ResourceChanges,
 ): Promise<Resource> {
   const { data } = await api.patch<Resource>(`/resources/${id}`, changes);
+  return data;
+}
+
+export async function createResource(
+  categoryId: string,
+  input: NewResource,
+): Promise<Resource> {
+  const { data } = await api.post<Resource>(
+    `/categories/${categoryId}/resources`,
+    input,
+  );
   return data;
 }
