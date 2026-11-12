@@ -5,6 +5,7 @@ import {
   KeyboardAvoidingView,
   Modal,
   Pressable,
+  ScrollView,
   StyleSheet,
   useWindowDimensions,
   View,
@@ -85,11 +86,22 @@ export function BottomSheet({ visible, onClose, children }: BottomSheetProps) {
         <Animated.View
           style={[
             styles.sheet,
-            { paddingBottom: insets.bottom + 24, transform: [{ translateY }] },
+            {
+              maxHeight: height * 0.92,
+              paddingBottom: insets.bottom + 24,
+              transform: [{ translateY }],
+            },
           ]}
         >
           <View style={styles.handle} />
-          {children}
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+            style={styles.scroll}
+            contentContainerStyle={styles.content}
+          >
+            {children}
+          </ScrollView>
         </Animated.View>
       </KeyboardAvoidingView>
     </Modal>
@@ -100,6 +112,7 @@ const styles = StyleSheet.create({
   root: { flex: 1, justifyContent: "flex-end" },
   backdrop: { flex: 1, backgroundColor: colors.foreground },
   sheet: {
+    flexShrink: 1,
     backgroundColor: colors.paper,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
@@ -114,4 +127,6 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: "#d9d2c6",
   },
+  scroll: { flexGrow: 0, flexShrink: 1 },
+  content: { gap: 16 },
 });

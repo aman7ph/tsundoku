@@ -3,12 +3,15 @@ import { Pressable, StyleSheet, View } from "react-native";
 
 import { colors } from "@/theme/colors";
 
-export function AddBar() {
+type AddBarProps = { onPress: () => void };
+
+export function AddBar({ onPress }: AddBarProps) {
   return (
     <View style={styles.bar}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Add a link"
+        onPress={onPress}
         style={({ pressed }) => [styles.button, pressed && styles.pressed]}
       >
         <Feather name="plus" size={24} color={colors.paper} />
@@ -23,11 +26,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.paper,
     borderTopWidth: 1,
     borderTopColor: colors.border,
-    paddingVertical: 5,
+    paddingVertical: 10,
   },
   button: {
-    width: 38,
-    height: 38,
+    width: 48,
+    height: 48,
     borderRadius: 16,
     backgroundColor: colors.coral,
     alignItems: "center",
