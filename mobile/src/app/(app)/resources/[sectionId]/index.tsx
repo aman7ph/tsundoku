@@ -43,14 +43,14 @@ export default function CollectionPage() {
           />
         }
       >
-        <PageHeader title={name} backLabel="All collections" />
+        <PageHeader title={name} backLabel="All resources" />
 
         <FolderGrid
           items={categories.data}
           newLabel="New category"
           onOpen={(category) =>
             router.push({
-              pathname: "/collections/[sectionId]/[categoryId]",
+              pathname: "/resources/[sectionId]/[categoryId]",
               params: {
                 sectionId,
                 categoryId: category.id,

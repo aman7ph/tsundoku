@@ -107,7 +107,7 @@ export function FolderPicker({ onBack, onChoose }: FolderPickerProps) {
       ) : (
         <Text style={[fonts.sans, styles.note]}>
           {path.length === 0
-            ? "No collections yet. Create one on the Collections page first."
+            ? "No resources yet. Create one on the resources page first."
             : path.length === 1
               ? "No categories in this collection yet. Create one on its page first."
               : "No subfolders here."}

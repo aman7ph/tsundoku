@@ -19,7 +19,7 @@ import { fonts } from "@/theme/fonts";
 
 const items = [
   { label: "Recent", href: "/home", icon: "home" },
-  { label: "Collections", href: "/collections", icon: "folder" },
+  { label: "Resources", href: "/resources", icon: "folder" },
   { label: "Social", href: "/social", icon: "share-2" },
   { label: "Search", href: "/search", icon: "search" },
   { label: "Settings", href: "/settings", icon: "settings" },

@@ -30,11 +30,11 @@ export function AddLinkSheet({ visible, onClose }: AddLinkSheetProps) {
 
 const looksLikeLink = (value: string) => /^https?:\/\/\S+$/i.test(value.trim());
 
-type Tab = "collections" | "social";
+type Tab = "resources" | "social";
 
 function AddLinkContent({ onClose }: { onClose: () => void }) {
   const [view, setView] = useState<"form" | "picker">("form");
-  const [tab, setTab] = useState<Tab>("collections");
+  const [tab, setTab] = useState<Tab>("resources");
   const [url, setUrl] = useState("");
   const [description, setDescription] = useState("");
   const [destination, setDestination] = useState<Destination | null>(null);
@@ -67,10 +67,7 @@ function AddLinkContent({ onClose }: { onClose: () => void }) {
   };
 
   const canSave =
-    tab === "collections" &&
-    destination !== null &&
-    looksLikeLink(url) &&
-    !busy;
+    tab === "resources" && destination !== null && looksLikeLink(url) && !busy;
 
   const save = async () => {
     if (!canSave || !destination) {
@@ -100,9 +97,9 @@ function AddLinkContent({ onClose }: { onClose: () => void }) {
 
       <View style={styles.tabs}>
         <TabButton
-          label="Collections"
-          active={tab === "collections"}
-          onPress={() => setTab("collections")}
+          label="Resources"
+          active={tab === "resources"}
+          onPress={() => setTab("resources")}
         />
         <TabButton
           label="Social Links"
@@ -143,7 +140,7 @@ function AddLinkContent({ onClose }: { onClose: () => void }) {
         </View>
       </View>
 
-      {tab === "collections" ? (
+      {tab === "resources" ? (
         <View>
           <Text style={[fonts.sans, styles.label]}>SAVE TO</Text>
           <Pressable

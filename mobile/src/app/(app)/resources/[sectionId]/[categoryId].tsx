@@ -89,7 +89,7 @@ export default function CategoryPage() {
           newLabel="New category"
           onOpen={(category) =>
             router.push({
-              pathname: "/collections/[sectionId]/[categoryId]",
+              pathname: "/resources/[sectionId]/[categoryId]",
               params: {
                 sectionId,
                 categoryId: category.id,

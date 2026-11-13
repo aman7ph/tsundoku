@@ -15,7 +15,7 @@ import { useRequest } from "@/hooks/use-request";
 import { FolderActions } from "@/components/folder-actions";
 import { useFolderMenu } from "@/hooks/use-folder-menu";
 
-export default function Collections() {
+export default function Resources() {
   const sections = useRequest(listSections);
   const [creating, setCreating] = useState(false);
   const menu = useFolderMenu();
@@ -40,7 +40,7 @@ export default function Collections() {
           newLabel="New collection"
           onOpen={(section) =>
             router.push({
-              pathname: "/collections/[sectionId]",
+              pathname: "/resources/[sectionId]",
               params: { sectionId: section.id, name: section.name },
             })
           }

@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 
 import { colors } from "@/theme/colors";
 
-export default function CollectionsLayout() {
+export default function ResourcesLayout() {
   return (
     <Stack
       screenOptions={{
