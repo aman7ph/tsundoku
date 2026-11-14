@@ -12,5 +12,4 @@ pub fn router() -> OpenApiRouter<AppState> {
             categories::update_category,
             categories::delete_category
         ))
-        .routes(routes!(categories::move_category))
 }

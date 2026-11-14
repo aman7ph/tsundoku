@@ -17,6 +17,7 @@ import { fonts } from "@/theme/fonts";
 
 type Folder = { id: string; name: string };
 
+/** The category a link will be saved in, and the collection it belongs to, for display */
 export type Destination = { categoryId: string; name: string; path: string };
 
 type FolderPickerProps = {
@@ -24,44 +25,37 @@ type FolderPickerProps = {
   onChoose: (destination: Destination) => void;
 };
 
+// Two steps: a collection, then one of its categories. A link is saved inside a category.
 export function FolderPicker({ onBack, onChoose }: FolderPickerProps) {
-  const [path, setPath] = useState<Folder[]>([]);
-  const current = path.length > 0 ? path[path.length - 1] : null;
+  // The collection opened so far, or null while choosing one
+  const [collection, setCollection] = useState<Folder | null>(null);
 
   const level = useRequest(
-    async (): Promise<Folder[]> => {
-      if (current === null) {
-        return listSections();
-      }
-      return listCategories(
-        path[0].id,
-        path.length > 1 ? current.id : undefined,
-      );
-    },
-    path.map((folder) => folder.id).join("/"),
+    async (): Promise<Folder[]> =>
+      collection ? listCategories(collection.id) : listSections(),
+    collection?.id ?? "",
   );
 
-  const canChoose = path.length >= 2;
-  const goBack = () =>
-    path.length === 0 ? onBack() : setPath(path.slice(0, -1));
+  const goBack = () => (collection ? setCollection(null) : onBack());
 
-  const names = path.map((folder) => folder.name);
-  const before = names.slice(Math.max(0, names.length - 2), -1);
+  const choose = (folder: Folder) => {
+    if (collection) {
+      onChoose({
+        categoryId: folder.id,
+        name: folder.name,
+        path: collection.name,
+      });
+    } else {
+      setCollection(folder);
+    }
+  };
 
   return (
     <>
       <SheetHeader title="Save to" onBack={goBack} />
 
       <Text numberOfLines={1} style={[fonts.sans, styles.breadcrumb]}>
-        {current === null ? (
-          "Choose a collection"
-        ) : (
-          <>
-            {names.length > 2 ? "… › " : ""}
-            {before.map((name) => `${name} › `)}
-            <Text style={styles.current}>{current.name}</Text>
-          </>
-        )}
+        {collection ? collection.name : "Choose a collection"}
       </Text>
 
       {level.loading ? (
@@ -86,7 +80,7 @@ export function FolderPicker({ onBack, onChoose }: FolderPickerProps) {
             <Pressable
               key={folder.id}
               accessibilityRole="button"
-              onPress={() => setPath([...path, folder])}
+              onPress={() => choose(folder)}
               style={({ pressed }) => [
                 styles.row,
                 pressed && styles.rowPressed,
@@ -96,43 +90,28 @@ export function FolderPicker({ onBack, onChoose }: FolderPickerProps) {
               <Text numberOfLines={1} style={[fonts.sans, styles.rowLabel]}>
                 {folder.name}
               </Text>
-              <Feather
-                name="chevron-right"
-                size={20}
-                color={colors.mutedStrong}
-              />
+              {collection ? null : (
+                <Feather
+                  name="chevron-right"
+                  size={20}
+                  color={colors.mutedStrong}
+                />
+              )}
             </Pressable>
           ))}
         </View>
       ) : (
         <Text style={[fonts.sans, styles.note]}>
-          {path.length === 0
-            ? "No resources yet. Create one on the resources page first."
-            : path.length === 1
-              ? "No categories in this collection yet. Create one on its page first."
-              : "No subfolders here."}
+          {collection
+            ? "No categories in this collection yet. Create one on its page first."
+            : "No collections yet. Create one on the Collections page first."}
         </Text>
       )}
 
-      {canChoose && current ? (
-        <Pressable
-          accessibilityRole="button"
-          onPress={() =>
-            onChoose({
-              categoryId: current.id,
-              name: current.name,
-              path: names.slice(0, -1).join(" › "),
-            })
-          }
-          style={({ pressed }) => [styles.choose, pressed && styles.pressed]}
-        >
-          <Text numberOfLines={1} style={[fonts.sans, styles.chooseLabel]}>
-            Save to {current.name}
-          </Text>
-        </Pressable>
-      ) : (
+      {collection ? null : (
         <Text style={[fonts.sans, styles.note]}>
-          Links are saved inside a category. Open a collection, then a category.
+          Links are saved inside a category. Open a collection, then choose a
+          category.
         </Text>
       )}
     </>
@@ -140,8 +119,7 @@ export function FolderPicker({ onBack, onChoose }: FolderPickerProps) {
 }
 
 const styles = StyleSheet.create({
-  breadcrumb: { fontSize: 13, color: colors.mutedStrong },
-  current: { fontWeight: "700", color: colors.foreground },
+  breadcrumb: { fontSize: 13, fontWeight: "700", color: colors.foreground },
   spinner: { paddingVertical: 24 },
   status: { alignItems: "center", gap: 12, paddingVertical: 12 },
   note: { fontSize: 14, lineHeight: 20, color: colors.mutedStrong },
@@ -168,14 +146,4 @@ const styles = StyleSheet.create({
   },
   rowPressed: { backgroundColor: colors.soft },
   rowLabel: { flex: 1, fontSize: 15, color: colors.foreground },
-  choose: {
-    height: 52,
-    borderRadius: 16,
-    backgroundColor: colors.coral,
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 16,
-  },
-  chooseLabel: { fontSize: 16, fontWeight: "700", color: colors.foreground },
-  pressed: { opacity: 0.85 },
 });

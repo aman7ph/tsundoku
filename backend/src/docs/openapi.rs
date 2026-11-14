@@ -14,7 +14,7 @@ use utoipa::{
         (name = "Health", description = "Service status"),
         (name = "Auth", description = "Sign in with Google, refresh and end sessions"),
         (name = "Sections", description = "Collections: top-level named sections"),
-        (name = "Categories", description = "Collections: categories and nested subcategories inside a section"),
+        (name = "Categories", description = "Collections: categories inside a section, holding the links"),
         (name = "Resources", description = "Collections: saved links inside a category, with visited and shareable flags"),
         (name = "Platforms", description = "Social Links: platforms such as YouTube or TikTok"),
         (name = "Accounts", description = "Social Links: the user's accounts on a platform"),
