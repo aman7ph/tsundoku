@@ -1,4 +1,5 @@
 import Feather from "@expo/vector-icons/Feather";
+import { useGlobalSearchParams } from "expo-router";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -12,12 +13,15 @@ import * as Clipboard from "expo-clipboard";
 import { describeError } from "@/api/errors";
 import { createResource } from "@/api/resources";
 import { BottomSheet } from "@/components/bottom-sheet";
-import { FolderPicker, type Destination } from "@/components/folder-picker";
 import { SheetHeader } from "@/components/sheet-header";
 import { useRefreshStore } from "@/stores/refresh";
 import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
-
+import {
+  FolderPicker,
+  type Destination,
+  type Folder,
+} from "@/components/folder-picker";
 type AddLinkSheetProps = { visible: boolean; onClose: () => void };
 
 export function AddLinkSheet({ visible, onClose }: AddLinkSheetProps) {
@@ -30,6 +34,30 @@ export function AddLinkSheet({ visible, onClose }: AddLinkSheetProps) {
 
 const looksLikeLink = (value: string) => /^https?:\/\/\S+$/i.test(value.trim());
 
+function useCurrentFolder(): {
+  destination: Destination | null;
+  startCollection: Folder | null;
+} {
+  const { sectionId, categoryId, name, collection } = useGlobalSearchParams<{
+    sectionId?: string;
+    categoryId?: string;
+    name?: string;
+    collection?: string;
+  }>();
+
+  if (sectionId && categoryId && name) {
+    return {
+      destination: { categoryId, name, path: collection ?? "" },
+      startCollection: collection ? { id: sectionId, name: collection } : null,
+    };
+  }
+
+  if (sectionId && name) {
+    return { destination: null, startCollection: { id: sectionId, name } };
+  }
+
+  return { destination: null, startCollection: null };
+}
 type Tab = "resources" | "social";
 
 function AddLinkContent({ onClose }: { onClose: () => void }) {
@@ -37,7 +65,10 @@ function AddLinkContent({ onClose }: { onClose: () => void }) {
   const [tab, setTab] = useState<Tab>("resources");
   const [url, setUrl] = useState("");
   const [description, setDescription] = useState("");
-  const [destination, setDestination] = useState<Destination | null>(null);
+  const here = useCurrentFolder();
+  const [destination, setDestination] = useState<Destination | null>(
+    here.destination,
+  );
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const bump = useRefreshStore((state) => state.bump);
@@ -46,6 +77,7 @@ function AddLinkContent({ onClose }: { onClose: () => void }) {
   if (view === "picker") {
     return (
       <FolderPicker
+        startCollection={here.startCollection}
         onBack={() => setView("form")}
         onChoose={(chosen) => {
           setDestination(chosen);
@@ -162,7 +194,14 @@ function AddLinkContent({ onClose }: { onClose: () => void }) {
                     numberOfLines={1}
                     style={[fonts.sans, styles.destinationPath]}
                   >
-                    {destination.path}
+                    {destination.path ? (
+                      <Text
+                        numberOfLines={1}
+                        style={[fonts.sans, styles.destinationPath]}
+                      >
+                        {destination.path}
+                      </Text>
+                    ) : null}
                   </Text>
                 </>
               ) : (

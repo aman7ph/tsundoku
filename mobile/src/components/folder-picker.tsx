@@ -15,7 +15,7 @@ import { useRequest } from "@/hooks/use-request";
 import { colors } from "@/theme/colors";
 import { fonts } from "@/theme/fonts";
 
-type Folder = { id: string; name: string };
+export type Folder = { id: string; name: string };
 
 /** The category a link will be saved in, and the collection it belongs to, for display */
 export type Destination = { categoryId: string; name: string; path: string };
@@ -23,12 +23,17 @@ export type Destination = { categoryId: string; name: string; path: string };
 type FolderPickerProps = {
   onBack: () => void;
   onChoose: (destination: Destination) => void;
+  startCollection?: Folder | null;
 };
 
 // Two steps: a collection, then one of its categories. A link is saved inside a category.
-export function FolderPicker({ onBack, onChoose }: FolderPickerProps) {
+export function FolderPicker({
+  onBack,
+  onChoose,
+  startCollection = null,
+}: FolderPickerProps) {
   // The collection opened so far, or null while choosing one
-  const [collection, setCollection] = useState<Folder | null>(null);
+  const [collection, setCollection] = useState<Folder | null>(startCollection);
 
   const level = useRequest(
     async (): Promise<Folder[]> =>

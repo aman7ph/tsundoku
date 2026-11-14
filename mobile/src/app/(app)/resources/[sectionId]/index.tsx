@@ -55,6 +55,7 @@ export default function CollectionPage() {
                 sectionId,
                 categoryId: category.id,
                 name: category.name,
+                collection: name,
               },
             })
           }
