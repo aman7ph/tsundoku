@@ -46,3 +46,6 @@ export async function createResource(
   );
   return data;
 }
+export async function deleteResource(id: string): Promise<void> {
+  await api.delete(`/resources/${id}`);
+}
