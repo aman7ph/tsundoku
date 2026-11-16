@@ -14,7 +14,12 @@ export type Resource = {
 
 export type NewResource = { url: string; description?: string };
 
-export type ResourceChanges = { visited?: boolean; shareable?: boolean };
+export type ResourceChanges = {
+  visited?: boolean;
+  shareable?: boolean;
+  title?: string;
+  description?: string;
+};
 
 export async function listResources(categoryId: string): Promise<Resource[]> {
   const { data } = await api.get<Resource[]>(
