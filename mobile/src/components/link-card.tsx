@@ -1,5 +1,5 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
 import Feather from "@expo/vector-icons/Feather";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 
 import type { Resource, ResourceChanges } from "@/api/resources";
@@ -9,9 +9,10 @@ import { fonts } from "@/theme/fonts";
 type LinkCardProps = {
   resource: Resource;
   onToggle: (changes: ResourceChanges) => void;
+  onMenuPress: () => void;
 };
 
-export function LinkCard({ resource, onToggle }: LinkCardProps) {
+export function LinkCard({ resource, onToggle, onMenuPress }: LinkCardProps) {
   return (
     <View style={[styles.card, resource.visited && styles.cardVisited]}>
       <Pressable
@@ -56,6 +57,15 @@ export function LinkCard({ resource, onToggle }: LinkCardProps) {
           size={20}
           color={resource.shareable ? colors.coral : colors.mutedStrong}
         />
+      </Pressable>
+
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="More options"
+        hitSlop={12}
+        onPress={onMenuPress}
+      >
+        <Feather name="more-horizontal" size={20} color={colors.mutedStrong} />
       </Pressable>
     </View>
   );
